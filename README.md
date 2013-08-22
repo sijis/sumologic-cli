@@ -1,7 +1,10 @@
 README
---------------------
+============
 
-This repo is for a sumologic cli client
+Sumologic is a cloud management log solution. This project is for a sumologic 
+search client which will allow to do queries from the cli.
+
+Sumologic API details are located on [their wiki](https://github.com/SumoLogic/sumo-api-doc/wiki/search-api)
 
 
 API PASSWORD
