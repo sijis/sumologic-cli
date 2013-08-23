@@ -6,6 +6,10 @@ import simplejson
 import sys
 from optparse import OptionParser
 import datetime
+import pprint
+
+def parse_results(results, data):
+    pprint.pprint(results)
 
 def main():
 
@@ -47,7 +51,7 @@ def main():
                       dest='nodrop',
                       action='store_true',
                       default=False,
-                      help='Enabling will return all results')
+                      help='Enabling will return all results - DISABLED')
     parser.add_option('-l', '--limits',
                       dest='limits', metavar='NUMBER',
                       default=None,
@@ -71,7 +75,6 @@ def main():
 
     data['valid_formats'] = ['json', 'text']
 
-
     if not data.has_key('username') or \
        not data.has_key('password'):
         print 'username and password are required.'
@@ -83,8 +86,6 @@ def main():
     if data.has_key('search'):
         t_search_data = urllib.quote(data['search'])
         t_search = 'q="%s"' % t_search_data
-        if data['nodrop']:
-            t_search = '%s%s' % (t_search, urllib.quote(' nodrop'))
         t_options.append(t_search)
 
     if  data['format'] not in data['valid_formats']:
@@ -135,7 +136,7 @@ def main():
         print '----------------------'
         sys.exit(11)
 
-    results = simplejson.load(handler)
+    parse_results(simplejson.load(handler), data)
 
 if __name__ == "__main__":
     main()
