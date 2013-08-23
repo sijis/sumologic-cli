@@ -1,5 +1,6 @@
 #!/usr/bin/python -tt
 
+import urllib
 import urllib2
 import simplejson
 import sys
@@ -80,9 +81,10 @@ def main():
     t_options = []
 
     if data.has_key('search'):
-        t_search = 'q="%s"' % data['search']
+        t_search_data = urllib.quote(data['search'])
+        t_search = 'q="%s"' % t_search_data
         if data['nodrop']:
-            t_search = '%snodrop' % t_search 
+            t_search = '%s%s' % (t_search, urllib.quote(' nodrop'))
         t_options.append(t_search)
 
     if  data['format'] not in data['valid_formats']:
@@ -103,7 +105,6 @@ def main():
         'Content-type': 'application/json',
     }
 
-    print data['url']
     req = urllib2.Request(data['url'], None, headers)
 
     password_manager = urllib2.HTTPPasswordMgrWithDefaultRealm()
