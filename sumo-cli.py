@@ -9,7 +9,9 @@ import datetime
 import pprint
 
 def parse_results(results, data):
-    pprint.pprint(results)
+    length = len(results)
+    pprint.pprint(results[-data['limits']:])
+    print 'Records found: %d' % length
 
 def main():
 
@@ -75,18 +77,19 @@ def main():
 
     data['valid_formats'] = ['json', 'text']
 
-    if not data.has_key('username') or \
-       not data.has_key('password'):
-        print 'username and password are required.'
+    if data['username'] is None or \
+       data['password'] is None:
+        print 'Username and Password are required.'
         print 'Exiting....'
         sys.exit(1) 
 
+    if data['search'] is None:
+        print 'A search criteria is required.'
+        sys.exit(1)
+
     t_options = []
 
-    if data.has_key('search'):
-        t_search_data = urllib.quote(data['search'])
-        t_search = 'q="%s"' % t_search_data
-        t_options.append(t_search)
+    t_options.append('q="%s"' % urllib.quote(data['search']))
 
     if  data['format'] not in data['valid_formats']:
         print 'Invalid and unsupported format specified'
@@ -95,11 +98,15 @@ def main():
     else:
         t_options.append('format=%s' % data['format'])
 
+    if data['limits']:
+        data['limits'] = int(data['limits'])
+        
+
     t_options.append('tz=%s' % data['timezone'])
     t_options.append('from=%s' % data['timefrom'])
     t_options.append('to=%s' % data['timeto'])
+
     data['options'] = '&'.join(t_options)
-    
     data['url'] = '%s?%s' % (data['base_url'], data['options'])
 
     headers = {
