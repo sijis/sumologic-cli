@@ -1,5 +1,7 @@
 #!/usr/bin/python -tt
 
+__author__ = 'Sijis Aviles'
+
 import urllib
 import urllib2
 import simplejson
@@ -36,7 +38,7 @@ def main():
     parser.add_option('-f', '--format',
                       dest='format', metavar='FORMAT',
                       default='json',
-                      help='The desired result format.')
+                      help='Search results output format')
     parser.add_option('-m', '--timzone',
                       dest='timezone', metavar='TIMEZONE',
                       default='UTC',
@@ -44,11 +46,11 @@ def main():
     parser.add_option('-o', '--time-to',
                       dest='timeto', metavar='TIME',
                       default='%s' % right_now,
-                      help='Timezone used in results')
+                      help='End time for search')
     parser.add_option('-i', '--time-from',
                       dest='timefrom', metavar='TIME',
                       default='%s' % minutes_ago,
-                      help='Timezone used in results')
+                      help='Start time for search')
     parser.add_option('-n', '--nodrop',
                       dest='nodrop',
                       action='store_true',
@@ -57,7 +59,7 @@ def main():
     parser.add_option('-l', '--limits',
                       dest='limits', metavar='NUMBER',
                       default=None,
-                      help='Timezone used in results')
+                      help='Number of results to return')
     parser.add_option('--url',
                       dest='base_url', metavar='URL',
                       default='https://api.sumologic.com/api/v1/logs/search',
@@ -65,7 +67,7 @@ def main():
     parser.add_option('-v', '--verbose',
                       dest='verbose',
                       action='store_true',
-                      help='enable verbosity')
+                      help='Enable verbosity')
     parser.add_option('--debug',
                       dest='debug',
                       default=False, action='store_true',
