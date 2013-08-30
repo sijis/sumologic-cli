@@ -14,6 +14,7 @@ def parse_results(results, data):
     length = len(results)
     pprint.pprint(results[-data['limits']:])
     print 'Records found: %d' % length
+    print 'Only showing %d records.' % data['limits']
 
 def main():
 
@@ -58,7 +59,7 @@ def main():
                       help='Enabling will return all results - DISABLED')
     parser.add_option('-l', '--limits',
                       dest='limits', metavar='NUMBER',
-                      default=None,
+                      default=1000,
                       help='Number of results to return')
     parser.add_option('--url',
                       dest='base_url', metavar='URL',
@@ -100,9 +101,7 @@ def main():
     else:
         t_options.append('format=%s' % data['format'])
 
-    if data['limits']:
-        data['limits'] = int(data['limits'])
-        
+    data['limits'] = int(data['limits'])
 
     t_options.append('tz=%s' % data['timezone'])
     t_options.append('from=%s' % data['timefrom'])
