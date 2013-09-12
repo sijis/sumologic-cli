@@ -12,9 +12,12 @@ import pprint
 
 def parse_results(results, data):
     length = len(results)
-    pprint.pprint(results[-data['limits']:])
-    print 'Records found: %d' % length
-    print 'Only showing %d records.' % data['limits']
+    if length > 0:
+        pprint.pprint(results[-data['limits']:])
+        print 'Records found: %d' % length
+        print 'Only showing %d records.' % data['limits']
+    else:
+        print 'No records found.'
 
 def main():
 
@@ -126,8 +129,8 @@ def main():
     try:
         handler = urllib2.urlopen(req)
     except urllib2.HTTPError as e:
-        print 'Issue encountered.'
-        print e
+        print 'An issue was encountered.'
+        print e.read()
         sys.exit(10)
 
     if data['debug']:
