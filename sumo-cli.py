@@ -92,7 +92,7 @@ def main():
 
     t_options = []
 
-    t_options.append('q="%s"' % urllib.quote(data['search']))
+    t_options.append('q=%s' % urllib.quote(data['search']))
 
     if  data['format'] not in data['valid_formats']:
         print 'Invalid and unsupported format specified'
