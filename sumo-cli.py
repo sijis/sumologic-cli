@@ -2,22 +2,16 @@
 
 __author__ = 'Sijis Aviles'
 
-import urllib
-import urllib2
-import simplejson
 import sys
 from optparse import OptionParser
 import datetime
 import pprint
+import sumologic.client
 
 def parse_results(results, data):
-    length = len(results)
-    if length > 0:
-        pprint.pprint(results[-data['limits']:])
-        print 'Records found: %d' % length
-        print 'Only showing %d records.' % data['limits']
-    else:
-        print 'No records found.'
+    pprint.pprint(results[-data['limits']:])
+    print 'Records found: %d' % length
+    print 'Only showing %d records.' % data['limits']
 
 def main():
 
@@ -25,7 +19,7 @@ def main():
     right_now = time_now.isoformat()
     minutes_ago = (time_now - datetime.timedelta(minutes=5)).isoformat()
 
-    parser = OptionParser(version='%prog 0.1',
+    parser = OptionParser(version='%prog 0.2',
                           description='Sumologic cli to query data through API')
     parser.add_option('-u', '--username',
                       dest='username', metavar='USERNAME',
@@ -64,14 +58,6 @@ def main():
                       dest='limits', metavar='NUMBER',
                       default=1000,
                       help='Number of results to return')
-    parser.add_option('--url',
-                      dest='base_url', metavar='URL',
-                      default='https://api.sumologic.com/api/v1/logs/search',
-                      help='API URL')
-    parser.add_option('-v', '--verbose',
-                      dest='verbose',
-                      action='store_true',
-                      help='Enable verbosity')
     parser.add_option('--debug',
                       dest='debug',
                       default=False, action='store_true',
@@ -93,61 +79,36 @@ def main():
         print 'A search criteria is required.'
         sys.exit(1)
 
-    t_options = []
-
-    t_options.append('q=%s' % urllib.quote(data['search']))
+    t_options = {}
 
     if  data['format'] not in data['valid_formats']:
         print 'Invalid and unsupported format specified'
         print 'The valid formats are: %s' % ', '.join(data['valid_formats'])
         sys.exit(3)
     else:
-        t_options.append('format=%s' % data['format'])
+        t_options['format'] = data['format']
 
     data['limits'] = int(data['limits'])
 
-    t_options.append('tz=%s' % data['timezone'])
-    t_options.append('from=%s' % data['timefrom'])
-    t_options.append('to=%s' % data['timeto'])
+    t_options['tz'] = data['timezone']
+    t_options['from'] = data['timefrom']
+    t_options['to'] = data['timeto']
 
-    data['options'] = '&'.join(t_options)
-    data['url'] = '%s?%s' % (data['base_url'], data['options'])
+    client = sumologic.client.Client(auth=(data['username'], data['password']), debug=data['debug'])
+    results = client.search(data['search'], **t_options)
+    client.debug()
 
-    headers = {
-        'Content-type': 'application/json',
-    }
-
-    req = urllib2.Request(data['url'], None, headers)
-
-    password_manager = urllib2.HTTPPasswordMgrWithDefaultRealm()
-    password_manager.add_password(None, data['url'], data['username'],
-                                    data['password'])
-    auth_manager = urllib2.HTTPBasicAuthHandler(password_manager)
-    opener = urllib2.build_opener(auth_manager)
-    urllib2.install_opener(opener)
-     
     try:
-        handler = urllib2.urlopen(req)
-    except urllib2.HTTPError as e:
+        results['data'][0]
+    except KeyError:
         print 'An issue was encountered.'
-        print e.read()
+        print '%s: %s' % (results['response'], results['reason'])
         sys.exit(10)
+    except IndexError:
+        print 'No records found.'
+        sys.exit(3)
 
-    if data['debug']:
-        print '..-:[ debug mode ]:-..'
-        print '---- data ------------'
-        for opt in data:
-            print '%s => %s' % (opt, data[opt])
-        print '---- options----------'
-        for opt in t_options:
-            print '%s' % (opt)
-
-        print '---- other -----------'
-        print 'Return Code: %s' % handler.getcode()
-        print '----------------------'
-        sys.exit(11)
-
-    parse_results(simplejson.load(handler), data)
+    parse_results(results['data'], data)
 
 if __name__ == "__main__":
     main()
