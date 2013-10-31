@@ -10,7 +10,7 @@ import sumologic.client
 
 def parse_results(results, data):
     pprint.pprint(results[-data['limits']:])
-    print 'Records found: %d' % length
+    print 'Records found: %d' % len(results)
     print 'Only showing %d records.' % data['limits']
 
 def main():
