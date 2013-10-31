@@ -7,6 +7,7 @@ from optparse import OptionParser
 import datetime
 import pprint
 import sumologic.client
+import sumologic.search
 
 def parse_results(results, data):
     pprint.pprint(results[-data['limits']:])
@@ -94,8 +95,9 @@ def main():
     t_options['from'] = data['timefrom']
     t_options['to'] = data['timeto']
 
-    client = sumologic.client.Client(auth=(data['username'], data['password']), debug=data['debug'])
-    results = client.search(data['search'], **t_options)
+    client = sumologic.client.Client(auth=(data['username'], data['password']), debug=data['debug'], **t_options)
+    search = sumologic.search.Search(client)
+    results = search.query(data['search'])
     client.debug()
 
     try:
