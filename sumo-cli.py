@@ -95,9 +95,9 @@ def main():
     t_options['from'] = data['timefrom']
     t_options['to'] = data['timeto']
 
-    client = sumologic.client.Client(auth=(data['username'], data['password']), debug=data['debug'], **t_options)
+    client = sumologic.client.Client(auth=(data['username'], data['password']), debug=data['debug'])
     search = sumologic.search.Search(client)
-    results = search.query(data['search'])
+    results = search.query(data['search'], **t_options)
     client.debug()
 
     try:
