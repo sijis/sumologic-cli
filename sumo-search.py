@@ -38,7 +38,7 @@ def main():
                       dest='format', metavar='FORMAT',
                       default='json',
                       help='Search results output format')
-    parser.add_option('-m', '--timzone',
+    parser.add_option('-m', '--timezone',
                       dest='timezone', metavar='TIMEZONE',
                       default='UTC',
                       help='Timezone used in results')
